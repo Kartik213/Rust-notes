@@ -403,6 +403,7 @@ fn main() {
     // HashMaps
     // stores a key value pair in rust, similar to map in C++, Dict in python
     // Methods --> insert, get, remove, clear
+    // use std::collections::HashMap;
 
     let mut users: HashMap<String, i32> = HashMap::new();
     users.insert(String::from("Kartik"), 22);
@@ -419,8 +420,158 @@ fn main() {
         None => println!("Not found"),
     }
 
+    users.remove("Kartik");
+
+    println!("{:?}", users);
+
+    users.clear();
+
+    println!("{:?}", users);
+
+    // given a vector of tuple convert it to hashmap
+
+    let input_vec = vec![(String::from("Kartik"), 22), (String::from("Ashvin"), 23)];
+
+    let mp = group_values_by_keys(input_vec);
+
+    println!("{:?}", mp);
+
+    // Iterators
+    // The iterator pattern allows you to perform some task on a sequence of items in turn.
+    // An iterator is responsible for the logic of iterating over each item and determining when the sequence has finished.
+    // When you use iterators, you don’t have to reimplement that logic yourself.
+    // In Rust, iterators are lazy, meaning they have no effect until you call methods that consume the iterator to use it up.
+
+    let v1 = vec![1, 2, 3];
+
+    for val in &v1{
+        print!("{} ", val);
+    }
+
+    let v1_iter = v1.iter();
+
+    println!("{:?}", v1_iter);
+
+    // iter method provides a way to iterate over the elements of a collection by borrowing them.
+    // we can't mutate the variables since we have an immutable referece to the internal elements.
+    // to mutate the variables use iter_mut method
+
+    // Types of Iterators
+    // 1. Iterating usig for loops
+    // let nums = vec![1, 2, 3];
+    // for value in nums {
+    //     println!("{}", value)
+    // }
+
+    // 2. Iterating after creating an iterator
+    // first create an iterator from vector .iter() retuns a new variable of type iterator
+    // let nums = vec![1, 2, 3];
+    // let iter_nums = nums.iter();
+    // for value in iter_nums {
+    //     // cannot mutate immutable reference
+    //     // value += 1;
+    //     println!("{}", value)
+    // }
+
+    // 3. Iterating using .next
+    // let nums = vec![1, 2, 3];
+    // let mut iter_nums = nums.iter();
+
+    // // while there is some value next print the value
+    // // next method returns a option (it will point to a number of i32 or nothing in this case)
+
+    // while let Some(val) = iter_nums.next() {
+    //     print!("{} ", val);
+    // }
+
+    // 4. IterMut
+    // let mut nums = vec![1, 2, 3];
+    // let iter_nums = nums.iter_mut();
+
+    // for value in iter_nums {
+    //     *value = *value + 1;
+    // }
+
+    // print!("{:?}", nums);
+
+    // 5. IntoIter
+    // it is used to convert a collection into an iterator that takes ownership of the collection
+    // usefull when
+
+    // 1. No longer need the original collection
+    // 2. Need to squeeze performance benefits by transferring ownership (avoiding references)
+
+    // let nums = vec![1, 2, 3];
+    // let iter_nums = nums.into_iter();
+
+    // for value in iter_nums {
+    //     print!("{} ", value);
+    // }
 
 
+    // which one to use?
+
+    // iter
+    // if we want immutable reference to the inner variable and dont want to trasfer ownership
+
+    // iterMut
+    // if we want mutable references to the inner varaibles and dont want to transfer ownership
+
+    // iterInto
+    // if you want to mover the varaible into the iterator and dont want to use it afterwards
+
+    // when we write a simple for loop it uses into_iter
+
+    // Consuming adaptors
+    // methods that call next are called consuming adaptors, because calling them uses up the iterator
+
+    // let nums = vec![1, 2, 3];
+    // let iter_nums = nums.iter();
+    // let total : i32 = iter_nums.sum();
+
+    // print!("{}", total);
+
+    // sum will consume the iterator not the original vector so we cant use the iterator anymore.
+
+    // Iterator adaptors
+    // iterator adaptors are methods defined on the iterator trait that dont consume the iterator, 
+    // they produce different iterators by changing some aspect of the original iterator.
+
+    let nums = vec![1, 2, 3];
+    let iter_nums = nums.iter();
+
+    // |x| x+1 is a closure, |x| is argument and x+1 is what we return
+
+    // map is similar to map in js
+    // let iter2 = iter_nums.map(|x| x+1);
+
+    // for val in iter2 {
+    //     print!("{} ", val);
+    // }
+
+    // filter
+    // let iter3 = iter_nums.filter(|x| **x%2 == 0);
+
+    // for val in iter3 {
+    //     print!("{} ", val);
+    // }
+
+    // how to convert an iterator back to a vector?
+    // simply call collect on the iterator
+
+    // let iter2 = iter_nums.map(|x| x+1);
+    // let new_nums: Vec<i32> = iter2.collect();
+
+    // print!("{:?}", new_nums);
+
+}
+
+fn group_values_by_keys(vec: Vec<(String, i32)>) -> HashMap<String, i32> {
+    let mut mp = HashMap::new();
+    for (key, value) in vec {
+        mp.insert(key, value);
+    }
+    return mp;
 }
 
 fn find_first_a(s: String) -> Option<i32> {
