@@ -650,6 +650,103 @@ fn main() {
     // is syntax sugar for a longer form known as trait bound
     // pub fn notify<T: Summary>(item: T) {}
 
+
+    // Lifetimes
+    // takes lot of time to understand why they are needed
+    // lots of time compiler will help and guide in right direction
+    
+    // works like charm
+    // let ans;
+    // let str1 = String::from("small");
+    // let str2 = String::from("longer");
+    // ans = longest(str1, str2);
+
+    // perfectly fine as well
+    // let ans;
+    // let str1 = String::from("small");
+    // {
+    //     let str2 = String::from("longer");
+    //     ans = longest(str1, str2);
+    // }
+
+    // println!("{}", ans);
+
+    // lets instead of passing the complete ownership of string to longest function now we pass reference
+
+    // now the ans points to either str2 or str1 if it points to str2 str2 is not valid outside the block so how can we access it
+    // classic dangling pointer behaviour
+    
+    // compiler will think it doesnt know the lifetime or str1 or str2 so it does not know for how many time will ans be alive
+
+    // let ans;
+    // let str1 = String::from("small");
+    // {
+    //     let str2 = String::from("longer");
+    //     ans = longest(&str1, &str2);
+    // }
+
+    // println!("{}", ans);
+
+    // lifetime generic annotation 'a
+    let ans;
+    let str1 = String::from("small");
+    {
+        let str2 = String::from("longer");
+        // `str2` does not live long enough
+        // borrowed value does not live long enough
+        ans = longest(&str1, &str2);
+
+        // return type is only valid for lifetime intersection of str1 & str2
+
+        // the return reference will be valid as long as both the references are valid
+        println!("{}", ans);
+    }
+
+    // struct with lifetimes
+
+    struct User3<'a> {
+        name: &'a str
+    }
+
+    let first_name = String::from("Kartik");
+    let user = User3{name: &first_name};
+    println!("The name of the user {} ", user.name);
+
+
+
+
+
+
+
+
+}
+
+// fn longest(a:String, b:String) -> String {
+//     if a.len() > b.len() {
+//         return a;
+//     }
+//     else{
+//         return b;
+//     }
+// }
+
+// fn longest(a:&str, b:&str) -> &str {
+//     if a.len() > b.len() {
+//         return a;
+//     }
+//     else{
+//         return b;
+//     }
+// }
+
+// with lifetime generic annotation
+fn longest<'a>(a:&'a str, b:&'a str) -> &'a str {
+    if a.len() > b.len() {
+        return a;
+    }
+    else{
+        return b;
+    }
 }
 
 struct User2 {
