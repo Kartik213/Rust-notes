@@ -564,6 +564,71 @@ fn main() {
 
     // print!("{:?}", new_nums);
 
+        // String vs Slice
+
+    // The String type, which is provided by Rust’s standard library rather than coded into the core language, is a growable, mutable, owned, UTF-8 encoded string type.
+    // When Rustaceans refer to “strings” in Rust, they might be referring to either the String or the string slice &str types, not just one of those types.
+    // both types are used heavily in Rust’s standard library, and both String and string slices are UTF-8 encoded.
+
+    // Slices let you reference a contiguous sequence of elements in a collection rather than the whole collection.
+    // A slice is a kind of reference, so it does not have ownership.
+
+    let mut name = String::from("Kartik");
+    name.push_str(" Gupta");
+    println!("{}", name);
+
+    println!("length {}", name.len());
+
+    // replace everything from 7 to end of the string
+    name.replace_range(7..name.len(), "gupta");
+
+    println!("{}", name);
+
+    // slice 
+    // take the example of function where we have to return first word from the sentence we return a new string there
+    // we have that string in original as well as in new variable as well, it will require more memory to store it.
+    // and if the original string is deleted we still have the part of string stored and if the original string changes i still have old answer stored somewhere
+    // so what we want is our answer should reference to the part of original string 
+    // this way it takes less space & changes whenever the original is changed
+
+    // what we want is instead of returning first word from string we want a view into the original string and not to copy it over
+
+    let word = String::from("Hello world");
+    
+    // let word2 = &word[0..5];
+    let word2 = find_first_word(&word);
+
+
+    // if we try to clear -> word compiler does not let us clear it
+    // word.clear();
+
+    println!("{}", word2);
+
+    // type of s is &str we have use string literal
+    let s = "Hello world";
+    println!("{}", s);
+
+    // string slices can also be applied to collections like arrays/vectors
+
+    let arr = vec![1, 2, 3];
+
+    let arr_slice = &arr[1..2];
+    println!("{:?}", arr_slice);
+
+
+}
+
+fn find_first_word(word : &String) -> &str {
+
+    let mut space_index = 0;
+    for i in word.chars() {
+        if i == ' '{
+            break;
+        }
+        space_index = space_index + 1;
+    }
+
+    return &word[0..space_index];
 }
 
 fn group_values_by_keys(vec: Vec<(String, i32)>) -> HashMap<String, i32> {
