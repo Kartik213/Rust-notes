@@ -22,7 +22,6 @@
 // i64 -- 64 bit signed integer
 // i128 -- 128 bit signed integer
 
-
 // u8 -- 8 bit unsigned integer
 // u16 -- 16 bit unsigned integer
 // u32 -- 32 bit unsigned integer
@@ -34,12 +33,12 @@
 // f64 -- 64 bit decimal
 // f128 -- 128 bit decimal
 
-use std::{collections::HashMap, fs};
+use std::{collections::HashMap, fmt::format, fs, iter::Sum};
 
 fn main() {
-    let x:i8 = -40;
-    let y:u8 = 30;
-    let z:f32 = 20.202020; 
+    let x: i8 = -40;
+    let y: u8 = 30;
+    let z: f32 = 20.202020;
 
     // print!("x: {}", x);
     // print!("y: {}", y);
@@ -74,9 +73,9 @@ fn main() {
 
     if is_true {
         println!("is true");
-    }else if !is_true {
+    } else if !is_true {
         println!("is false");
-    }else {
+    } else {
         println!("Nothing");
     }
 
@@ -90,16 +89,16 @@ fn main() {
     let first_word: String = get_first_word(sentence);
     println!("{}", first_word);
 
-    let a:i32 = 32;
-    let b:i32 = 32;
+    let a: i32 = 32;
+    let b: i32 = 32;
     let sum = do_sum_with_return(a, b);
     println!("{}", sum);
     do_sum_without_return(a, b);
-    
+
     // println!("Hello world");
 
     // Memory managment
-    
+
     // Garbage collector
     // - No dangling pointer or memory issues.
     // - Example - Java, JS
@@ -121,7 +120,6 @@ fn main() {
     // as the runLoop function runs, a new array is pushed to RAM, as soon as the control reaches after the runLoop function the array is no longer needed
     // x needs to exist inside the scope of runLoop function so it is garbage collected / x can be deallocated from the RAM.
     // and eventually garbage collected
-
 
     // Manual
     // You allocate & deallocate memory yourself
@@ -149,7 +147,7 @@ fn main() {
 
     // Error -- cannot mutate immutable variable `unique`rust-analyzerE0384
     // let unique = 34;
-    // unique = 2 
+    // unique = 2
 
     // let mut unique = 34;
     // unique = 36;
@@ -160,7 +158,7 @@ fn main() {
 
     // Stack - Numbers, booleans, fixed size arrays
     // Heap - Strings, Vectors
-    
+
     // Ownership
     // Each piece of data in rust has a single owner at any given time. whenever the owner goes out of the scope rust
     // automatically deallocates the memory associated with the data preventing memory leaks
@@ -199,7 +197,7 @@ fn main() {
     // println!("{}", s1);
 
     // Important
-    // A variable can only have one mutable reference 
+    // A variable can only have one mutable reference
     // it cannot have multiple mutable or immutable references if one mutable reference is already there.
 
     // multiple immutable references are allowed but if there is one mutable reference no more references are allowed.
@@ -217,7 +215,7 @@ fn main() {
     // Structs
     // struts let you structure the data together.
     // unit struct & tuple struct
-    struct User{
+    struct User {
         active: bool,
         username: String,
         email: String,
@@ -225,10 +223,13 @@ fn main() {
     let user1 = User {
         active: true,
         username: String::from("Kartik2__1"),
-        email: String::from("kartikg02013@gmail.com")
+        email: String::from("kartikg02013@gmail.com"),
     };
 
-    println!("struct user -- {} {} {}", user1.username, user1.active, user1.email);
+    println!(
+        "struct user -- {} {} {}",
+        user1.username, user1.active, user1.email
+    );
 
     // Implementing structs
     // One can attach functions to instances of structs
@@ -243,15 +244,15 @@ fn main() {
     impl Rect {
         fn area(&self) -> u32 {
             // self.width*self.height
-            return self.width*self.height;
+            return self.width * self.height;
         }
-        fn debug(){
+        fn debug() {
             println!("Debug funtion")
         }
     }
 
     let rect = Rect {
-        width:30,
+        width: 30,
         height: 30,
     };
     println!("Area {}", rect.area());
@@ -262,7 +263,7 @@ fn main() {
     // Enums
     // Enums in rust are similar to enums in typescript. They allow us to define a type by enumerating its possible variants.
     // Makes your code more strict
-    
+
     // enum Direction {
     //     North,
     //     East,
@@ -289,11 +290,10 @@ fn main() {
     println!("Area of square: {}", calculate_area(square));
     println!("Area of rectangle: {}", calculate_area(rectangle));
 
-
     // Generics
     struct Point<T> {
-        x:T,
-        y:T,
+        x: T,
+        y: T,
     }
 
     // struct Points<A, B>{
@@ -304,14 +304,15 @@ fn main() {
 
     // let points: Points<i32, f32> = Points{x:5, y:10.0, z:10.0};
 
+    let integer_point: Point<i32> = Point { x: 5, y: 10 };
 
-    let integer_point: Point<i32> = Point{x:5, y:10};
-
-    let string_point: Point<String> = Point{x:String::from("5"), y:String::from("10")};
+    let string_point: Point<String> = Point {
+        x: String::from("5"),
+        y: String::from("10"),
+    };
 
     println!("Integer point: ({}, {})", integer_point.x, integer_point.y);
     println!("String point: ({}, {})", string_point.x, string_point.y);
-
 
     // Error handeling
     // Rust does error handeling using Result Enum
@@ -321,12 +322,12 @@ fn main() {
     //     Err(E),
     // }
 
-    let res = fs::read_to_string( "example.txt");
+    let res = fs::read_to_string("example.txt");
 
     match res {
         Ok(content) => {
             println!("file content: {}", content);
-        },
+        }
         Err(err) => {
             println!("Error: {}", err);
         }
@@ -345,7 +346,7 @@ fn main() {
 
     let my_str = String::from("Kartik");
 
-    match find_first_a(my_str){
+    match find_first_a(my_str) {
         Some(index) => println!("The letter 'a' is found at index: {}", index),
         None => println!("The letter 'a' is not found in the string."),
     }
@@ -361,7 +362,6 @@ fn main() {
     // Variables can be overwritten with shadowing.
     let mutable = true;
     println!("{}", mutable);
-
 
     // collections --> the data these collections point to is stored on the heap cause it is dynamic data (size can change)
 
@@ -415,7 +415,7 @@ fn main() {
 
     // println!("{}", user.unwrap());
 
-    match user{
+    match user {
         Some(u) => println!("{}", u),
         None => println!("Not found"),
     }
@@ -444,7 +444,7 @@ fn main() {
 
     let v1 = vec![1, 2, 3];
 
-    for val in &v1{
+    for val in &v1 {
         print!("{} ", val);
     }
 
@@ -508,7 +508,6 @@ fn main() {
     //     print!("{} ", value);
     // }
 
-
     // which one to use?
 
     // iter
@@ -534,7 +533,7 @@ fn main() {
     // sum will consume the iterator not the original vector so we cant use the iterator anymore.
 
     // Iterator adaptors
-    // iterator adaptors are methods defined on the iterator trait that dont consume the iterator, 
+    // iterator adaptors are methods defined on the iterator trait that dont consume the iterator,
     // they produce different iterators by changing some aspect of the original iterator.
 
     let nums = vec![1, 2, 3];
@@ -564,7 +563,7 @@ fn main() {
 
     // print!("{:?}", new_nums);
 
-        // String vs Slice
+    // String vs Slice
 
     // The String type, which is provided by Rust’s standard library rather than coded into the core language, is a growable, mutable, owned, UTF-8 encoded string type.
     // When Rustaceans refer to “strings” in Rust, they might be referring to either the String or the string slice &str types, not just one of those types.
@@ -584,20 +583,19 @@ fn main() {
 
     println!("{}", name);
 
-    // slice 
+    // slice
     // take the example of function where we have to return first word from the sentence we return a new string there
     // we have that string in original as well as in new variable as well, it will require more memory to store it.
     // and if the original string is deleted we still have the part of string stored and if the original string changes i still have old answer stored somewhere
-    // so what we want is our answer should reference to the part of original string 
+    // so what we want is our answer should reference to the part of original string
     // this way it takes less space & changes whenever the original is changed
 
     // what we want is instead of returning first word from string we want a view into the original string and not to copy it over
 
     let word = String::from("Hello world");
-    
+
     // let word2 = &word[0..5];
     let word2 = find_first_word(&word);
-
 
     // if we try to clear -> word compiler does not let us clear it
     // word.clear();
@@ -615,7 +613,6 @@ fn main() {
     let arr_slice = &arr[1..2];
     println!("{:?}", arr_slice);
 
-
     // Generics
 
     // let bigger_i32 = largest_i32(2, 4);
@@ -632,45 +629,95 @@ fn main() {
     println!("{}", bigger_i32);
     println!("{}", bigger_char);
 
+    // Traits
+    // A trait defines the functionality a particular type has and can share with other types.
+    // we can use traits to define a shared behavior in an abstract way.
+    // we can use trait bounds to specify that a generic type can be any type that has certian behavior.
 
+    // traits is similar to interfaces in other languages with slight differences
+    // a single struct can implement multiple traits
 
+    let user = User2 {
+        name: String::from("Kartik"),
+        age: 22,
+    };
+    println!("{}", user.summarize());
 
+    noftiy(&user);
+    noftiy(&String::from("kartik"));
+
+    // item: impl Summary 
+    // is syntax sugar for a longer form known as trait bound
+    // pub fn notify<T: Summary>(item: T) {}
+
+}
+
+struct User2 {
+    name: String,
+    age: u32,
+}
+
+// public trait summary
+// normal trait where the implementor has to define it
+// pub trait Summary {
+//     fn summarize(&self) -> String;
+// }
+
+// default trait
+pub trait Summary {
+    fn summarize(&self) -> String{
+        return String::from("summarize")
+    }
+}
+
+// implement summary trait for user2
+// we can simply say user2 struct implements summary trait
+// impl Summary for User2 {
+//     fn summarize(&self) -> String {
+//         return format!("User {} is {} years old", self.name, self.age);
+//     }
+// }
+
+// for default summary trait
+impl Summary for User2 {}
+impl Summary for String {}
+
+// Traits as parameters
+// this function only accept items which have implemented Summary trait
+pub fn noftiy(item: &impl Summary) {
+    println!("{}", item.summarize());
 }
 
 // function generic types
 // <T: std::cmp::PartialOrd> tells the compiler that T can only be things which can are comparable not everything
-
 fn largest<T: std::cmp::PartialOrd>(a: T, b: T) -> T {
-    if a > b{
+    if a > b {
         a
-    }else{
+    } else {
         b
     }
 }
 
-fn largest_i32(a: i32, b: i32) -> i32{
+fn largest_i32(a: i32, b: i32) -> i32 {
     if a > b {
         return a;
-    }
-    else{
+    } else {
         return b;
     }
 }
 
 fn largest_char(a: char, b: char) -> char {
-    if a> b{
+    if a > b {
         a
-    }
-    else{
+    } else {
         b
     }
 }
 
-fn find_first_word(word : &String) -> &str {
-
+fn find_first_word(word: &String) -> &str {
     let mut space_index = 0;
     for i in word.chars() {
-        if i == ' '{
+        if i == ' ' {
             break;
         }
         space_index = space_index + 1;
@@ -688,7 +735,7 @@ fn group_values_by_keys(vec: Vec<(String, i32)>) -> HashMap<String, i32> {
 }
 
 fn find_first_a(s: String) -> Option<i32> {
-    for(index, character) in s.chars().enumerate() {
+    for (index, character) in s.chars().enumerate() {
         if character == 'a' {
             return Some(index as i32);
         }
@@ -711,22 +758,22 @@ fn calculate_area(shape: Shape) -> f64 {
     // return area;
 
     match shape {
-        Shape::Circle(radius) => std::f64::consts::PI*radius*radius,
-        Shape::Square(side_length) => side_length*side_length,
-        Shape::Rectangle(width, height) => width*height,
+        Shape::Circle(radius) => std::f64::consts::PI * radius * radius,
+        Shape::Square(side_length) => side_length * side_length,
+        Shape::Rectangle(width, height) => width * height,
     }
 }
 
-fn update_str(s: &mut String){
+fn update_str(s: &mut String) {
     s.push_str(" world");
 }
 
-fn do_sum_with_return(a: i32, b:i32) -> i32{
-    return a+b;
+fn do_sum_with_return(a: i32, b: i32) -> i32 {
+    return a + b;
 }
 
-fn do_sum_without_return(a: i32, b:i32){
-    println!("{}", a+b);
+fn do_sum_without_return(a: i32, b: i32) {
+    println!("{}", a + b);
 }
 
 fn get_first_word(sentence: String) -> String {
@@ -741,10 +788,10 @@ fn get_first_word(sentence: String) -> String {
 }
 
 fn even_filter(vec: &Vec<i32>) -> Vec<i32> {
-// fn even_filter(vec: Vec<i32>) -> Vec<i32> {
+    // fn even_filter(vec: Vec<i32>) -> Vec<i32> {
     let mut ans: Vec<i32> = Vec::new();
-    
-    for val in vec{
+
+    for val in vec {
         if val % 2 == 0 {
             // ans.push(val);
             ans.push(*val);
