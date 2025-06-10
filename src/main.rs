@@ -616,6 +616,54 @@ fn main() {
     println!("{:?}", arr_slice);
 
 
+    // Generics
+
+    // let bigger_i32 = largest_i32(2, 4);
+    // let bigger_char = largest_char('a', 'b');
+
+    // println!("{}", bigger_i32);
+    // println!("{}", bigger_char);
+
+    // code repetation we can reduce this by using a generic type
+
+    let bigger_i32 = largest(2, 4);
+    let bigger_char = largest('a', 'b');
+
+    println!("{}", bigger_i32);
+    println!("{}", bigger_char);
+
+
+
+
+}
+
+// function generic types
+// <T: std::cmp::PartialOrd> tells the compiler that T can only be things which can are comparable not everything
+
+fn largest<T: std::cmp::PartialOrd>(a: T, b: T) -> T {
+    if a > b{
+        a
+    }else{
+        b
+    }
+}
+
+fn largest_i32(a: i32, b: i32) -> i32{
+    if a > b {
+        return a;
+    }
+    else{
+        return b;
+    }
+}
+
+fn largest_char(a: char, b: char) -> char {
+    if a> b{
+        a
+    }
+    else{
+        b
+    }
 }
 
 fn find_first_word(word : &String) -> &str {
