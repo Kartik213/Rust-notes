@@ -34,6 +34,8 @@
 // f128 -- 128 bit decimal
 
 use std::{collections::HashMap, fmt::format, fs, iter::Sum};
+// use std::thread;
+use std::{sync::mpsc, thread::{self, spawn}};
 
 fn main() {
     let x: i8 = -40;
@@ -713,8 +715,67 @@ fn main() {
     println!("The name of the user {} ", user.name);
 
 
+    // Multithreading
+    // machines have multiple cores(CPU's)
+    // but till now we were only using single core we can do more things parallaly on different cores using multithreading
 
+    // let handle = thread::spawn(
+    //     || {
+    //         for i in 1..10 {
+    //             println!("hii number {i} from spawned thread");
+    //         }
+    //     }
+    // );
 
+    // for i in 1..50 {
+    //     println!("hii number {i} from main thread");
+    // };
+
+    // wait till the handle thread is spawned
+    // handle.join();
+
+    // using move closure with threads
+    // we will use move keyword with closures that are passed to thread::spawn
+    // because the closure will take ownership of the values it uses from the environment
+    // thus transferring ownership from one thread to another
+
+    // compiler does not know when the thread will be executed if it is executed after the block ends
+    // vec1 is removed but the thread might try to access it to prevent this memory issue we use move
+    {
+        // let vec1 = vec![1, 2, 3];
+        // let handle = thread::spawn(|| {
+        //     println!("{:?}", vec1);
+        // });
+
+        let vec1 = vec![1, 2, 3];
+        let handle = thread::spawn(move|| {
+            println!("{:?}", vec1);
+        });
+        handle.join();
+    }
+
+    // message passing
+    // passing data between multiple threads
+    // it lets thread communicate with each other
+    // we use channels for this communication
+
+    // use std::{sync::mpsc, thread::{self, spawn}};
+
+    // mpsc -> multiple producer single consumer
+
+    let (tx, rx) = mpsc::channel();
+
+    // to create multiple producer do tx.clone()
+
+    spawn(move|| {
+        tx.send(String::from("Kartik")).unwrap();
+    });
+
+    let value = rx.recv();
+    match value{
+        Ok(value) => println!("{}", value),
+        Err(_err) => println!("Error while recieving"),
+    }
 
 
 
