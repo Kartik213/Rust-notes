@@ -33,11 +33,16 @@
 // f64 -- 64 bit decimal
 // f128 -- 128 bit decimal
 
+use std::future::Future;
 use std::{collections::HashMap, fmt::format, fs, iter::Sum};
 // use std::thread;
-use std::{sync::mpsc, thread::{self, spawn}};
+use std::{
+    sync::mpsc,
+    thread::{self, spawn},
+};
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let x: i8 = -40;
     let y: u8 = 30;
     let z: f32 = 20.202020;
@@ -648,15 +653,14 @@ fn main() {
     noftiy(&user);
     noftiy(&String::from("kartik"));
 
-    // item: impl Summary 
+    // item: impl Summary
     // is syntax sugar for a longer form known as trait bound
     // pub fn notify<T: Summary>(item: T) {}
-
 
     // Lifetimes
     // takes lot of time to understand why they are needed
     // lots of time compiler will help and guide in right direction
-    
+
     // works like charm
     // let ans;
     // let str1 = String::from("small");
@@ -677,7 +681,7 @@ fn main() {
 
     // now the ans points to either str2 or str1 if it points to str2 str2 is not valid outside the block so how can we access it
     // classic dangling pointer behaviour
-    
+
     // compiler will think it doesnt know the lifetime or str1 or str2 so it does not know for how many time will ans be alive
 
     // let ans;
@@ -707,13 +711,12 @@ fn main() {
     // struct with lifetimes
 
     struct User3<'a> {
-        name: &'a str
+        name: &'a str,
     }
 
     let first_name = String::from("Kartik");
-    let user = User3{name: &first_name};
+    let user = User3 { name: &first_name };
     println!("The name of the user {} ", user.name);
-
 
     // Multithreading
     // machines have multiple cores(CPU's)
@@ -748,7 +751,7 @@ fn main() {
         // });
 
         let vec1 = vec![1, 2, 3];
-        let handle = thread::spawn(move|| {
+        let handle = thread::spawn(move || {
             println!("{:?}", vec1);
         });
         handle.join();
@@ -767,19 +770,96 @@ fn main() {
 
     // to create multiple producer do tx.clone()
 
-    spawn(move|| {
+    spawn(move || {
         tx.send(String::from("Kartik")).unwrap();
     });
 
     let value = rx.recv();
-    match value{
+    match value {
         Ok(value) => println!("{}", value),
         Err(_err) => println!("Error while recieving"),
     }
 
+    // Macros
+    // code tha writes other code
+    // example vec!, print!, println!, format!
+
+    // Async await
+    // In rust async await is special syntax which allows us to write functions, closures, blocks that can pause execution
+    // and yield control back to the runtime allowing other code to make progress and pick back up where they left.
+
+    // It helps us write code which is asynchronous but looks like synchronous
+
+    // async fn my_function(){
+    //     println!("I'm an async function!")
+    // }
+
+    // Async await is syntactic sugar for this
+
+    // Async functions are simple functions which return something that implements future trait
+    // fn my_function() -> impl Future<Output = ()> {
+    //     async { println!("I'm an async function!") }
+    // }
+
+    // Future trait
+    // trait Future {
+    //     type Output;
+    //     fn poll(&mut self, wake: fn()) -> Poll<Self::Output>;
+    // }
+
+    // enum Poll<T> {
+    //     Ready(T),
+    //     Pending,
+    // }
+
+    // poll is used to check if the future trait is ready to return a value
+    // poll returns a enum with two variants either the future is ready with a value or the future is pending cause its not done executing
+    // the poll method also accepts a callback function wake
+    // if calling the poll method returns pending then the future will continue making the progress untill it is ready to
+    // get polled again when it is ready to get polled again the future will call the wake callback to notify its executor
+
+    // futures is similar to promise in javascript except in rust futures are lazy they wont do anything unless driven to completion by being polled
+    // await can only be called inside an async function
+    // main function is not allowed to be async 
+
+    // futures could be driven to completion in two ways
+    // 1. calling await on the future
+    // 2. manually polling the future untill its complete
+    // using await works on futures inside other futures works however for top most future we need some code
+    //  which will manually poll them to completion that code is called an runtime or an executor
+
+    // A runtime is responsible for polling the top most future and running it to completion
+    // it is also responsible for running multiple futures in parellel
+
+    // Javascript have an async runtime built-in but rust standard library does not provide any runtime
+    // so in rust we use external runtime the most popular one is tokio
+
+    // Tokio
+    // #[tokio::main]
+    // before main function allows our main function to be async and specifies that our async code will be executed by tokio runtime
+     
+    // my_function().await;
+
+    // futures are lazy so we can store them in a variable and call await on them later
+    // zero cost abstraction 
+    // we wont have any runtime cost unless we actually use the future 
+
+    let f = my_function();
+    println!("Lets go");
+    f.await;
 
 
+}
 
+async fn my_function() {
+    let s1 = read_from_db().await;
+    println!("First string: {s1}");
+    let s2 = read_from_db().await;
+    println!("First string: {s2}");
+}
+
+async fn read_from_db() -> String {
+    "DB_result".to_owned()
 }
 
 // fn longest(a:String, b:String) -> String {
@@ -801,11 +881,10 @@ fn main() {
 // }
 
 // with lifetime generic annotation
-fn longest<'a>(a:&'a str, b:&'a str) -> &'a str {
+fn longest<'a>(a: &'a str, b: &'a str) -> &'a str {
     if a.len() > b.len() {
         return a;
-    }
-    else{
+    } else {
         return b;
     }
 }
@@ -823,8 +902,8 @@ struct User2 {
 
 // default trait
 pub trait Summary {
-    fn summarize(&self) -> String{
-        return String::from("summarize")
+    fn summarize(&self) -> String {
+        return String::from("summarize");
     }
 }
 
