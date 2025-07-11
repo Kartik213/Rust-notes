@@ -33,6 +33,7 @@
 // f64 -- 64 bit decimal
 // f128 -- 128 bit decimal
 
+use std::fmt::Formatter;
 use std::future::Future;
 use std::{collections::HashMap, fmt::format, fs, iter::Sum};
 // use std::thread;
@@ -893,7 +894,59 @@ async fn main() {
 
     // println!("Rectangle: {:?}", rect)
 
-    
+    // Debug and display trait
+    // Types which want to be printable, Debug and Display trait must be implemented
+    // automatic implementation is only provided for types in the standard library
+    // debug trait can be implemented simply by using derivable trait #[derive(Debug)]
+    // display trait has to be manually implemented
+
+    // {:?} must be used to print out the type which has implemented the debug trait
+    // for making it pretty we can use {:#?}
+
+    // #[derive(Debug)]
+    // struct Structure(i32);
+    // #[derive(Debug)]
+    // struct Deep(Structure);
+
+    // // this will print "Deep(Structure(7))" to print only 7 manually implement debug trait
+    // println!("{:?}", Deep(Structure(7)))
+
+    struct Structure(i32);
+    struct Deep(Structure);
+
+    impl std::fmt::Debug for Deep {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "{}", self.0.0)
+        }
+    }
+
+    // this will print 7
+    println!("{:?}", Deep(Structure(7)));
+
+    // Display trait
+
+    struct Point2 {
+        x: f64,
+        y: f64,
+    }
+
+    impl std::fmt::Display for Point2 {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "Display {} + {}i", self.x, self.y)
+        }
+    }
+
+    impl std::fmt::Debug for Point2 {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "Debug: Complex {{ real:{}, image:{}}}", self.x, self.y)
+        }
+    }
+
+    let points: Point2 = Point2 { x:20.0, y:40.0 };
+
+    println!("{}", points);
+    println!("{:?}", points);
+
 
 
 }
