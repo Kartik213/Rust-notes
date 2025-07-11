@@ -849,6 +849,53 @@ async fn main() {
     f.await;
 
 
+    // Methods
+    // Functions that i associated with a particular type or struct
+    // takes parameter and reutrns a value but defined as a member of a struct or enum
+    // called using dot notation
+    // implemented throught impl block
+
+    // struct Rectangle {
+    //     width: u32,
+    //     height: u32,
+    // }
+    // impl Rectangle {
+    //     fn area(&self) -> u32{
+    //         self.width * self.height
+    //     }
+    // }
+
+    // let rect = Rectangle{
+    //     width: 50,
+    //     height: 30,
+    // };
+
+    // rect.area();
+
+    // Associated functions
+    // functions that are associated with a struct or an enum but does not take an instance as 
+    // its first parameter
+    // called using name of the type not an instance of it
+    // often used as constructors for a struct or enum
+
+    // #[derive(Debug)]
+    // struct Rectangle {
+    //     width: u32,
+    //     height: u32,
+    // }
+    // impl Rectangle {
+    //     fn rectangle(width: u32, height: u32) -> Rectangle{
+    //         Rectangle { width: width, height: height }
+    //     }
+    // }
+
+    // let rect = Rectangle::rectangle(30, 50);
+
+    // println!("Rectangle: {:?}", rect)
+
+    
+
+
 }
 
 async fn my_function() {
