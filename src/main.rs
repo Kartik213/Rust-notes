@@ -32,7 +32,6 @@
 // f32 -- 32 bit decimal
 // f64 -- 64 bit decimal
 // f128 -- 128 bit decimal
-
 use std::fmt::Formatter;
 use std::future::Future;
 use std::{collections::HashMap, fmt::format, fs, iter::Sum};
@@ -41,6 +40,7 @@ use std::{
     sync::mpsc,
     thread::{self, spawn},
 };
+mod advance_rust;
 
 #[tokio::main]
 async fn main() {
@@ -97,8 +97,8 @@ async fn main() {
     let first_word: String = get_first_word(sentence);
     println!("{}", first_word);
 
-    let a: i32 = 32;
-    let b: i32 = 32;
+    let a: i32 = i32::MAX;
+    let b: i32 = i32::MAX;
     let sum = do_sum_with_return(a, b);
     println!("{}", sum);
     do_sum_without_return(a, b);
@@ -172,7 +172,7 @@ async fn main() {
     // automatically deallocates the memory associated with the data preventing memory leaks
 
     // every variable created in heap has its owner in stack if the stack frame gets pop the heap variable is removed.
-    // if we ever try to change the owner the previos one dies.
+    // if we ever try to change the owner the previous one dies.
 
     // let s1 = String::from("hello");
     // let s2:String = s1;
@@ -197,16 +197,39 @@ async fn main() {
     // println!("{}", s2);
     // println!("{}", s1);
 
-    // If the borrower dies the data is not cleared, data is cleared only when the owner dies.
+    // If the borrower dies the memory is not cleared, memory is cleared only when the owner dies.
 
+    // Important
+    // A variable can only have one mutable reference
+    // it cannot have multiple mutable or immutable references if one mutable reference is already there.
+
+    // Below code is perfectly fine because as soon as the print call completes, the mutable reference is dropped.
+    let mut s1 = String::from("hello");
+    println!("{}", s1);
+    update_str(&mut s1);
+    println!("{}", s1);
+
+    let s2 = &mut s1;
+    println!("s2: {}", s2);
+
+    let s3 = &s1;
+    println!("s3: {}", s3);
+
+    let s4 = &s1;
+    println!("s4: {}", s4);
+
+    // But this won't work
     // let mut s1 = String::from("hello");
     // println!("{}", s1);
     // update_str(&mut s1);
     // println!("{}", s1);
 
-    // Important
-    // A variable can only have one mutable reference
-    // it cannot have multiple mutable or immutable references if one mutable reference is already there.
+    // let s2 = &mut s1;
+    // let s3 = &s1;
+    // let s4 = &s1;
+    // println!("s2: {}", s2);
+    // println!("s3: {}", s3);
+    // println!("s4: {}", s4);
 
     // multiple immutable references are allowed but if there is one mutable reference no more references are allowed.
 
@@ -223,6 +246,22 @@ async fn main() {
     // Structs
     // struts let you structure the data together.
     // unit struct & tuple struct
+
+    // 1. Classic Structs (a.k.a. C-style structs)
+    // These have named fields.
+    // struct Person {
+    //     name: String,
+    //     age: u32,
+    // }
+
+    // 2. Tuple Structs
+    // These have unnamed fields, accessed by index.
+    // struct Point(i32, i32);
+
+    // 3. Unit Structs
+    // These have no fields at all.
+    // struct Marker;
+
     struct User {
         active: bool,
         username: String,
@@ -376,6 +415,7 @@ async fn main() {
     // Vectors --> similar to vectors in c++ a dynamic array where we can push and pop elements
     // it allows us to store more than one value in a single data structure that puts all the values next to each other in memory contigous allocation of memory.
 
+    println!("Vectors----------");
     let mut vec = Vec::new();
     vec.push(1);
     vec.push(2);
@@ -458,7 +498,7 @@ async fn main() {
 
     let v1_iter = v1.iter();
 
-    println!("{:?}", v1_iter);
+    println!("\n{:?}", v1_iter);
 
     // iter method provides a way to iterate over the elements of a collection by borrowing them.
     // we can't mutate the variables since we have an immutable referece to the internal elements.
@@ -736,7 +776,7 @@ async fn main() {
     // };
 
     // wait till the handle thread is spawned
-    // handle.join();
+    // let _ = handle.join();
 
     // using move closure with threads
     // we will use move keyword with closures that are passed to thread::spawn
@@ -755,7 +795,7 @@ async fn main() {
         let handle = thread::spawn(move || {
             println!("{:?}", vec1);
         });
-        handle.join();
+        let _ = handle.join();
     }
 
     // message passing
@@ -782,7 +822,7 @@ async fn main() {
     }
 
     // Macros
-    // code tha writes other code
+    // code that writes other code
     // example vec!, print!, println!, format!
 
     // Async await
@@ -851,7 +891,7 @@ async fn main() {
 
 
     // Methods
-    // Functions that i associated with a particular type or struct
+    // Functions that are associated with a particular type or struct
     // takes parameter and reutrns a value but defined as a member of a struct or enum
     // called using dot notation
     // implemented throught impl block
@@ -947,6 +987,44 @@ async fn main() {
     println!("{}", points);
     println!("{:?}", points);
 
+    // closures
+
+    // Anonymous functions that are able to capture values from scope in which they are defined
+    // can be define inline
+    // dont require type annotation
+    // can take ownership using move keyword
+    
+    // pyramid of Doom
+    // caused by nested matcher functions
+
+    // let listener = std::net::TcpListener::bind("127.0.0.1:19800");
+    // match listener {
+    //     Ok(connections) => {
+    //         for stream in connections.incoming() {
+    //             // let _stream = stream.unwrap();
+    //             match stream {
+    //                 Ok(_res) => println!("Connection established"),
+    //                 Err(e) => println!("Error {:?}", e)
+    //             }
+    //         }
+    //     },
+    //     Err(e) => println!("{:?}", e)
+    // }
+
+    // do this instead of nested matching
+
+    // If the function returns a Result, we can use ? instead of nesting matches.
+    // This keeps code flat and idiomatic. But it requires function to return a Result (or Option).
+    // fn main() -> std::io::Result<()> {
+    //     let listener = std::net::TcpListener::bind("127.0.0.1:19800")?;
+    //     for stream in listener.incoming() {
+    //         let _stream = stream?; // if it’s Err, propagate up
+    //         println!("Connection established!");
+    //     }
+    //     Ok(())
+    // }
+
+    advance_rust::smart_pointers::smart_pointers();
 
 
 }
@@ -955,7 +1033,7 @@ async fn my_function() {
     let s1 = read_from_db().await;
     println!("First string: {s1}");
     let s2 = read_from_db().await;
-    println!("First string: {s2}");
+    println!("Second string: {s2}");
 }
 
 async fn read_from_db() -> String {
@@ -1105,12 +1183,15 @@ fn update_str(s: &mut String) {
     s.push_str(" world");
 }
 
-fn do_sum_with_return(a: i32, b: i32) -> i32 {
-    return a + b;
+fn do_sum_with_return(a: i32, b: i32) -> i64 {
+    return a as i64 + b as i64;
 }
 
 fn do_sum_without_return(a: i32, b: i32) {
-    println!("{}", a + b);
+    let a_new = a as i64;
+    let b_new = b as i64;
+    println!("{}", a_new + b_new);
+    println!("Testing {}", a as i64 + b as i64);
 }
 
 fn get_first_word(sentence: String) -> String {
